@@ -71,16 +71,20 @@ public class ProductDAO {
 		Connection con = DBUtil.getConnection();
 		
 		// Original Query ±¸¼º
-		String sql = "SELECT * FROM product ";
-		
+		String sql = "select p.prod_no, p.prod_name, p.reg_date, p.price,"
+				+ " nvl(t.tran_status_code, 0) tran_status_code  "
+				+ "from product p, transaction t"
+				+ " where p.prod_no = t.prod_no(+) ";
 		if (search.getSearchCondition() != null) {
-			if ( search.getSearchCondition().equals("0") &&  !search.getSearchKeyword().equals("") ) {
-				sql += " WHERE prod_no = '" + search.getSearchKeyword()+"'";
-			} else if ( search.getSearchCondition().equals("1") && !search.getSearchKeyword().equals("")) {
-				sql += " WHERE prod_name ='" + search.getSearchKeyword()+"'";
+			if (search.getSearchCondition().equals("0")) {
+				sql += "and p.PROD_NO LIKE '" + search.getSearchKeyword()
+							+ "%'";
+			} else if (search.getSearchCondition().equals("1")) {
+				sql += "and p.PROD_NAME LIKE '" + search.getSearchKeyword()
+							+ "%'";
 			}
 		}
-		sql += " ORDER BY prod_no";
+		sql += " order by p.PROD_NO";
 		
 		System.out.println("ProductDAO::Original SQL :: " + sql);
 		
@@ -103,6 +107,7 @@ public class ProductDAO {
 			product.setProdName(rs.getString("prod_name"));
 			product.setRegDate(rs.getDate("reg_date"));
 			product.setPrice(rs.getInt("price"));
+			product.setProTranCode(rs.getString("tran_status_code").trim());
 			list.add(product);
 		}
 		

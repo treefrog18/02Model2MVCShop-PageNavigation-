@@ -38,7 +38,7 @@ function fncGetProductList(currentPage){
 
 <div style="width:98%; margin-left:10px;">
 
-<form name="detailForm" action="/listProduct.do?menu=search" method="post">
+<form name="detailForm" action="/listProduct.do" method="post">
 
 <table width="100%" height="37" border="0" cellpadding="0"	cellspacing="0">
 	<tr>
@@ -138,7 +138,33 @@ function fncGetProductList(currentPage){
 		<td></td>
 		<td align="left">
 		
-			판매중
+			<%if(product.getProTranCode().equals("0")) {%>
+			판매중&nbsp;&nbsp;&nbsp; 
+			<%} %>
+			
+			<%if(menu.equals("manage") && (product.getProTranCode()).equals("1")){%>
+			구매완료&nbsp;&nbsp;&nbsp;<a href="/updateTranCode.do?prodNo=<%=product.getProdNo()%>&tranCode=<%=product.getProTranCode()%>">배송하기</a>
+			<%} %>
+			
+			<%if(menu.equals("manage") && product.getProTranCode().equals("3")) {%>
+			배송완료&nbsp;&nbsp;&nbsp; 
+			<%} %>
+			
+			<%if(menu.equals("manage") && product.getProTranCode().equals("2")) {%>
+			배송중&nbsp;&nbsp;&nbsp; 
+			<%} %>
+			
+			<%if(menu.equals("search") && product.getProTranCode().equals("1")) {%>
+			재고없음&nbsp;&nbsp;&nbsp; 
+			<%} %>
+			
+			<%if(menu.equals("search") && product.getProTranCode().equals("2")) {%>
+			재고없음&nbsp;&nbsp;&nbsp; 
+			<%} %>
+			
+			<%if(menu.equals("search") && product.getProTranCode().equals("3")) {%>
+			재고없음&nbsp;&nbsp;&nbsp; 
+			<%} %>
 			</td>
 		</tr>
 	<tr>
@@ -153,12 +179,33 @@ function fncGetProductList(currentPage){
 	<tr>
 		<td align="center">
 		   <input type="hidden" id="currentPage" name="currentPage" value=""/>
-			<% if( resultPage.getCurrentPage() <= resultPage.getPageUnit() ){ %>
+		   <%if(menu.equals("manage")) { %>
+		   		<input type="hidden" name="menu" value="manage"/>
+			   <% if( resultPage.getCurrentPage() <= resultPage.getPageUnit() ){ %>
 					◀ 이전
+				<% }else{ %>
+						<a href="javascript:fncGetProductList('<%=resultPage.getCurrentPage()-1%>')">◀ 이전</a>
+				<% } %>
+	
+				<%	for(int i=resultPage.getBeginUnitPage();i<= resultPage.getEndUnitPage() ;i++){	%>
+						<a href="javascript:fncGetProductList('<%=i %>');"><%=i %></a>
+				<% 	}  %>
+		
+				<% if( resultPage.getEndUnitPage() >= resultPage.getMaxPage() ){ %>
+						이후 ▶
+				<% }else{ %>
+						<a href="javascript:fncGetProductList('<%=resultPage.getEndUnitPage()+1%>')">이후 ▶</a>
+				<% } %>
+		   <% } %>
+		   
+		   <%if(menu.equals("search")) { %>
+		  	 <input type="hidden" name="menu" value="search"/>
+			   <% if( resultPage.getCurrentPage() <= resultPage.getPageUnit() ){ %>
+				◀ 이전
 			<% }else{ %>
 					<a href="javascript:fncGetProductList('<%=resultPage.getCurrentPage()-1%>')">◀ 이전</a>
 			<% } %>
-
+	
 			<%	for(int i=resultPage.getBeginUnitPage();i<= resultPage.getEndUnitPage() ;i++){	%>
 					<a href="javascript:fncGetProductList('<%=i %>');"><%=i %></a>
 			<% 	}  %>
@@ -168,6 +215,8 @@ function fncGetProductList(currentPage){
 			<% }else{ %>
 					<a href="javascript:fncGetProductList('<%=resultPage.getEndUnitPage()+1%>')">이후 ▶</a>
 			<% } %>
+		  <% }%>
+			
 		
     	</td>
 	</tr>
